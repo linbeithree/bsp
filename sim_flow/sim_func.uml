@@ -1,0 +1,41 @@
+@startuml
+== 函数调用流 ==
+autonumber "<b>[00]"
+app -> api :  SimCardInit
+note left #AAFFFF: only init global variables
+app -> api :  SimCardAtr
+note left #AAFFFF: init sim controller and RDSS device
+app -> api :  SimCardRead
+note left #AAFFFF: read data from device
+app -> api :  SimCardWrite
+note left #AAFFFF: write data to device
+app -> api :  SimCardRequest
+note left #AAFFFF: write data to device and read response from device
+
+autonumber "<b>[00]"
+api -> "I/O" :  cyg_io_lookup
+note right #FFAAFF: input "dev/sim0",return handler
+api -> "I/O" :  cyg_io_set_config
+note right #FFAAFF: set *buf length,timeout,etu,parity
+api -> "I/O" :  cyg_io_read
+note right #FFAAFF: read data
+api -> "I/O" :  cyg_io_write
+note right #FFAAFF: write data
+
+autonumber "<b>[00]"
+"I/O" -> driver :  sim_init
+note right #FFFFAA: create and attach irq,init mutex
+"I/O" -> driver :  sim_lookup
+note right #FFFFAA: return handler
+"I/O" -> driver :  sim_set_config
+note right #FFFFAA: set buf,size,timeout,etu,parity
+"I/O" -> driver :  sim_write
+note right #FFFFAA: set tx fifo,gpcnt and tx interrupt,wait condition
+"I/O" -> driver :  sim_read
+note right #FFFFAA: set rx fifo,gpcnt and rx interrupt,wait condition
+"I/O" -> driver :  bp2016_sim_ISR
+note right #FFFFAA: mask vector,call DSR
+"I/O" -> driver :  bp2016_sim_DSR
+note right #FFFFAA: handle irq,ack to GIC,unmask vector
+
+@enduml

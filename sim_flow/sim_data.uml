@@ -1,0 +1,30 @@
+@startuml
+== 数据流 ==
+autonumber "<b>[00]"
+app -> api :  *txbuf
+note left: app input variables
+app -> api :  txlength
+app -> api :  *rxbuf
+app -> api :  rxlength
+app -> api :  timeout
+app -> api :  etu
+app -> api :  parity
+
+
+autonumber "<b>[00]"
+api -> "I/O" :  (struct sim_api_data_t) req
+note left
+	sim_api_data_t {
+		*wbuf
+		wsize
+		*rbuf
+		rsize
+		timeout
+		etu
+		parity
+	}
+end note
+
+note right of api #FFAAAA: cyg_io_set_config
+
+@enduml
