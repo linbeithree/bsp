@@ -1,0 +1,47 @@
+@startuml
+== 函数调用流 ==
+autonumber "<b>[00]"
+thread -> DevDriver :  hal_lpc_eeprom_write
+note left #AAFFFF: write device
+thread -> DevDriver :  hal_lpc_eeprom_read
+note left #AAFFFF: read device
+
+autonumber "<b>[00]"
+DevDriver -> "wrapper" :  cat24c256_is_busy
+note right #FFAAFF: check busy
+DevDriver -> "wrapper" :  cat24c256_do_write_cyle
+note right #FFAAFF: cycle write
+DevDriver -> "wrapper" :  cyg_i2c_transaction_begin
+note right #FFAAFF: begin
+DevDriver -> "wrapper" :  cyg_i2c_transaction_rx
+note right #FFAAFF: read data
+DevDriver -> "wrapper" :  cyg_i2c_transaction_tx
+note right #FFAAFF: write data
+DevDriver -> "wrapper" :  cyg_i2c_transaction_end
+note right #FFAAFF: stop
+
+autonumber "<b>[00]"
+"wrapper" -> "platform" :  *(bus->i2c_init_fn)
+note right #FFFFAA: init
+"wrapper" -> "platform" :  *(bus->i2c_tx_fn)
+note right #FFFFAA: tx
+"wrapper" -> "platform" :  *(bus->i2c_rx_fn)
+note right #FFFFAA: rx
+"wrapper" -> "platform" :  *(bus->i2c_stop_fn)
+note right #FFFFAA: stop
+
+autonumber "<b>[00]"
+"platform" -> "driver" :  lpc2xxx_i2c_isr
+note right #CCFFAA: ISR
+"platform" -> "driver" :  lpc2xxx_i2c_dsr
+note right #CCFFAA: DSR
+"platform" -> "driver" :  cyg_lpc2xxx_i2c_init
+note right #CCFFAA: init
+"platform" -> "driver" :  cyg_lpc2xxx_i2c_tx
+note right #CCFFAA: tx
+"platform" -> "driver" :  cyg_lpc2xxx_i2c_rx
+note right #CCFFAA: rx
+"platform" -> "driver" :  cyg_lpc2xxx_i2c_stop
+note right #CCFFAA: stop
+
+@enduml
