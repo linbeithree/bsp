@@ -1,14 +1,18 @@
 @startuml
 == 函数调用流 ==
 autonumber "<b>[00]"
-thread -> DevDriver :  cyg_spi_transfer
+API -> DevDriver :  cyg_spi_transfer
 note left #AAFFFF: transfer
-thread -> DevDriver :  cyg_spi_transaction_begin
+API -> DevDriver :  cyg_spi_transaction_begin
 note left #AAFFFF: begin
-thread -> DevDriver :  cyg_spi_transaction_transfer
+API -> DevDriver :  cyg_spi_transaction_begin_nb
+note left #AAFFFF: begin nb
+API -> DevDriver :  cyg_spi_transaction_transfer
 note left #AAFFFF: xfer
-thread -> DevDriver :  cyg_spi_transaction_end
-note left #AAFFFF: xfer
+API -> DevDriver :  cyg_spi_transaction_tick
+note left #AAFFFF: tick
+API -> DevDriver :  cyg_spi_transaction_end
+note left #AAFFFF: end
 
 autonumber "<b>[00]"
 DevDriver -> "spi" :  *(bus->spi_transaction_begin)

@@ -5,10 +5,14 @@ API -> "I/O" :  cyg_spi_transfer
 note left #AAFFFF: transfer
 API -> "I/O" :  cyg_spi_transaction_begin
 note left #AAFFFF: begin
+API -> "I/O" :  cyg_spi_transaction_begin_nb
+note left #AAFFFF: begin nb
 API -> "I/O" :  cyg_spi_transaction_transfer
 note left #AAFFFF: xfer
+API -> "I/O" :  cyg_spi_transaction_tick
+note left #AAFFFF: tick
 API -> "I/O" :  cyg_spi_transaction_end
-note left #AAFFFF: xfer
+note left #AAFFFF: end
 
 autonumber "<b>[00]"
 "I/O" -> "spi" :  *(bus->spi_transaction_begin)
