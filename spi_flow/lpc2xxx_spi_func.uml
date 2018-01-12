@@ -1,0 +1,58 @@
+@startuml
+== 函数调用流 ==
+autonumber "<b>[00]"
+thread -> DevDriver :  cyg_spi_transfer
+note left #AAFFFF: transfer
+thread -> DevDriver :  cyg_spi_transaction_begin
+note left #AAFFFF: begin
+thread -> DevDriver :  cyg_spi_transaction_begin_nb
+note left #AAFFFF: begin nb
+thread -> DevDriver :  cyg_spi_transaction_transfer
+note left #AAFFFF: xfer
+thread -> DevDriver :  cyg_spi_transaction_tick
+note left #AAFFFF: tick
+thread -> DevDriver :  cyg_spi_transaction_end
+note left #AAFFFF: end
+
+autonumber "<b>[00]"
+DevDriver -> "spi" :  *(bus->spi_transaction_begin)
+note right #FFAAFF: begin
+DevDriver -> "spi" :  *(bus->spi_transaction_transfer)
+note right #FFAAFF: transfer
+DevDriver -> "spi" :  *(bus->spi_transaction_tick)
+note right #FFAAFF: tick
+DevDriver -> "spi" :  *(bus->spi_transaction_end)
+note right #FFAAFF: end
+DevDriver -> "spi" :  *(bus->spi_get_config)
+note right #FFAAFF: get config
+DevDriver -> "spi" :  *(bus->spi_set_config)
+note right #FFAAFF: set config
+
+autonumber "<b>[00]"
+"spi" -> "driver" :  spi_lpc2xxx_isr
+note right #FFFFAA: isr
+"spi" -> "driver" :  spi_lpc2xxx_dsr
+note right #FFFFAA: dsr
+"spi" -> "driver" :  spi_lpc2xxx_get_config
+note right #FFFFAA: get clk and others
+"spi" -> "driver" :  spi_lpc2xxx_set_config
+note right #FFFFAA: set clk and others
+"spi" -> "driver" :  spi_lpc2xxx_begin
+note right #FFFFAA: begin
+"spi" -> "driver" :  spi_lpc2xxx_transfer
+note right #FFFFAA: transfer
+"spi" -> "driver" :  spi_lpc2xxx_tick
+note right #FFFFAA: tick
+"spi" -> "driver" :  spi_lpc2xxx_end
+note right #FFFFAA: end
+"spi" -> "driver" :  spi_lpc2xxx_init_bus
+note right #FFFFAA: init
+note left #AAFFFF
+	static cyg_spi_lpc2xxx_init_class spi_lpc2xxx_init
+    CYGBLD_ATTRIB_INIT_PRI(CYG_INIT_BUS_SPI);
+end note
+"spi" -> "driver" :  spi_lpc2xxx_baud
+note right #FFFFAA: config baud
+note left #AAFFFF: static
+
+@enduml
