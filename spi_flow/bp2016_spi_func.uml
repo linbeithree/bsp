@@ -1,0 +1,49 @@
+@startuml
+== 函数调用流 ==
+autonumber "<b>[00]"
+API -> SPI :  cyg_spi_transfer
+note left #AAFFFF: transfer
+API -> SPI :  cyg_spi_transaction_begin
+note left #AAFFFF: begin
+API -> SPI :  cyg_spi_transaction_begin_nb
+note left #AAFFFF: begin nb
+API -> SPI :  cyg_spi_transaction_transfer
+note left #AAFFFF: xfer
+API -> SPI :  cyg_spi_transaction_tick
+note left #AAFFFF: tick
+API -> SPI :  cyg_spi_transaction_end
+note left #AAFFFF: end
+
+autonumber "<b>[00]"
+SPI -> "I/O" :  *(bus->spi_transaction_begin)
+note right #FFAAFF: begin
+SPI -> "I/O" :  *(bus->spi_transaction_transfer)
+note right #FFAAFF: transfer
+SPI -> "I/O" :  *(bus->spi_transaction_tick)
+note right #FFAAFF: tick
+SPI -> "I/O" :  *(bus->spi_transaction_end)
+note right #FFAAFF: end
+SPI -> "I/O" :  *(bus->spi_get_config)
+note right #FFAAFF: get config
+SPI -> "I/O" :  *(bus->spi_set_config)
+note right #FFAAFF: set config
+
+autonumber "<b>[00]"
+"I/O" -> "driver" :  spi_bp2016_transaction_begin
+note right #FFFFAA: begin
+"I/O" -> "driver" :  spi_bp2016_transaction_transfer
+note right #FFFFAA: transfer
+"I/O" -> "driver" :  spi_bp2016_transaction_tick
+note right #FFFFAA: tick
+"I/O" -> "driver" :  spi_bp2016_transaction_end
+note right #FFFFAA: end
+"I/O" -> "driver" :  spi_bp2016_get_config
+note right #FFFFAA: get config
+"I/O" -> "driver" :  spi_bp2016_set_config
+note right #FFFFAA: set config
+"I/O" -> "driver" :  spi_bp2016_ISR
+note right #FFFFAA: ISR
+"I/O" -> "driver" :  spi_bp2016_DSR
+note right #FFFFAA: DSR
+
+@enduml
