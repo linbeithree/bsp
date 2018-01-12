@@ -30,7 +30,7 @@ note right #FFAAFF: set config
 
 autonumber "<b>[00]"
 "spi" -> "driver" :  spi_lpc2xxx_isr
-note right #FFFFAA: isr
+note right #FFFFAA: read irq status, read fifo
 "spi" -> "driver" :  spi_lpc2xxx_dsr
 note right #FFFFAA: dsr
 "spi" -> "driver" :  spi_lpc2xxx_get_config
@@ -38,21 +38,21 @@ note right #FFFFAA: get clk and others
 "spi" -> "driver" :  spi_lpc2xxx_set_config
 note right #FFFFAA: set clk and others
 "spi" -> "driver" :  spi_lpc2xxx_begin
-note right #FFFFAA: begin
+note right #FFFFAA: set clk CPHA and CPOL,enable cs,(which cs?)
 "spi" -> "driver" :  spi_lpc2xxx_transfer
 note right #FFFFAA: transfer
 "spi" -> "driver" :  spi_lpc2xxx_tick
-note right #FFFFAA: tick
+note right #FFFFAA: apply clk, rx&tx buffer are null
 "spi" -> "driver" :  spi_lpc2xxx_end
-note right #FFFFAA: end
+note right #FFFFAA: disable spi/cs.tx/rx buf = null,count = 0
 "spi" -> "driver" :  spi_lpc2xxx_init_bus
-note right #FFFFAA: init
+note right #FFFFAA: function pointer, mutex,cond,interrupt
 note left #AAFFFF
 	static cyg_spi_lpc2xxx_init_class spi_lpc2xxx_init
     CYGBLD_ATTRIB_INIT_PRI(CYG_INIT_BUS_SPI);
 end note
 "spi" -> "driver" :  spi_lpc2xxx_baud
-note right #FFFFAA: config baud
+note right #FFFFAA: write reg, config baud
 note left #AAFFFF: static
 
 @enduml
