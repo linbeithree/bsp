@@ -1,0 +1,69 @@
+@startuml
+== 函数调用流 ==
+autonumber "<b>[00]"
+API -> "I/O" :  cyg_spi_transfer
+note left #AAFFFF: transfer
+API -> "I/O" :  cyg_spi_transaction_begin
+note left #AAFFFF: begin
+API -> "I/O" :  cyg_spi_transaction_transfer
+note left #AAFFFF: xfer
+API -> "I/O" :  cyg_spi_transaction_end
+note left #AAFFFF: xfer
+
+autonumber "<b>[00]"
+"I/O" -> "spi" :  *(bus->spi_transaction_begin)
+note right #FFAAFF: begin
+"I/O" -> "spi" :  *(bus->spi_transaction_transfer)
+note right #FFAAFF: transfer
+"I/O" -> "spi" :  *(bus->spi_transaction_tick)
+note right #FFAAFF: tick
+"I/O" -> "spi" :  *(bus->spi_transaction_end)
+note right #FFAAFF: end
+"I/O" -> "spi" :  *(bus->spi_get_config)
+note right #FFAAFF: get config
+"I/O" -> "spi" :  *(bus->spi_set_config)
+note right #FFAAFF: set config
+
+autonumber "<b>[00]"
+"spi" -> "driver" :  spi_at91_init_bus
+note right #FFFFAA: init
+note left #AAFFFF
+	cyg_spi_at91_bus_init
+    CYGBLD_ATTRIB_INIT_PRI(CYG_INIT_BUS_SPI)
+end note
+"spi" -> "driver" :  spi_at91_ISR
+note right #FFFFAA: ISR
+"spi" -> "driver" :  spi_at91_DSR
+note right #FFFFAA: DSR
+"spi" -> "driver" :  spi_at91_transaction_begin
+note right #FFFFAA: begin, config CS
+"spi" -> "driver" :  spi_at91_transaction_transfer
+note right #FFFFAA: transfer
+"spi" -> "driver" :  spi_at91_transaction_tick
+note right #FFFFAA: tick, only support clk, not xfer
+"spi" -> "driver" :  spi_at91_transaction_end
+note right #FFFFAA: end
+"spi" -> "driver" :  spi_at91_get_config
+note right #FFFFAA: get config
+"spi" -> "driver" :  spi_at91_set_config
+note right #FFFFAA: set config
+"spi" -> "driver" :  spi_at91_calc_scbr
+note right #FFFFAA: config clk
+note left #AAFFFF: static
+"spi" -> "driver" :  spi_at91_set_npcs
+note right #FFFFAA: config CS
+note left #AAFFFF: static
+"spi" -> "driver" :  spi_at91_start_transfer
+note right #FFFFAA: start transfer
+note left #AAFFFF: static
+"spi" -> "driver" :  spi_at91_drop_cs
+note right #FFFFAA: drop CS
+note left #AAFFFF: static
+"spi" -> "driver" :  spi_at91_transfer
+note right #FFFFAA: transfer
+note left #AAFFFF: static
+"spi" -> "driver" :  spi_at91_transfer_polled
+note right #FFFFAA: config CS
+note left #AAFFFF: static
+
+@enduml
