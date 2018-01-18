@@ -1,0 +1,65 @@
+@startuml
+== Data Flow ==
+
+autonumber "<b>[00]"
+device -> API :  cyg_spi_lpc2xxx_dev_t
+note right #AAFFFF
+	cyg_spi_lpc2xxx_dev_t {
+		cyg_spi_device spi_device;
+
+		cyg_uint8 spi_cpha;
+		cyg_uint8 spi_cpol;
+		cyg_uint8 spi_lsbf;
+		cyg_uint32 spi_baud;
+
+		void (*spi_cs)(int);
+	};
+end note
+
+API -> "driver" :  cyg_spi_lpc2xxx_bus_t
+note right #AAFFFF
+	cyg_spi_lpc2xxx_bus_t {
+		cyg_spi_bus spi_bus;
+
+		cyg_interrupt spi_intr;
+		cyg_handle_t spi_hand;
+		cyg_vector_t spi_vect;
+		cyg_priority_t spi_prio;
+		cyg_drv_mutex_t spi_lock;
+		cyg_drv_cond_t spi_wait;
+
+		struct spi_dev *spi_dev;
+
+		volatile cyg_uint32 count;
+		volatile const cyg_uint8 *tx;
+		volatile cyg_uint8 *rx;
+	};
+
+	spi_dev {
+		volatile cyg_uint32 spcr;
+		volatile cyg_uint32 spsr;
+		volatile cyg_uint32 spdr;
+		volatile cyg_uint32 spccr;
+		cyg_uint32 d1, d2, d3;
+		volatile cyg_uint32 spint;
+	};
+end note
+
+"driver" -> "I/O" :  cyg_spi_bus
+note right #AAFFFF
+	cyg_spi_bus
+	{
+		cyg_drv_mutex_t spi_lock;
+		#ifdef CYGDBG_USE_ASSERTS
+		cyg_spi_device *spi_current_device;
+		#endif
+		void (*spi_transaction_begin)(cyg_spi_device *);
+		void (*spi_transaction_transfer)(cyg_spi_device *, cyg_bool, cyg_uint32, const cyg_uint8 *, cyg_uint8 *, cyg_bool);
+		void (*spi_transaction_tick)(cyg_spi_device *, cyg_bool, cyg_uint32);
+		void (*spi_transaction_end)(cyg_spi_device *);
+		int (*spi_get_config)(cyg_spi_device *, cyg_uint32, void *, cyg_uint32 *);
+		int (*spi_set_config)(cyg_spi_device *, cyg_uint32, const void *, cyg_uint32 *);
+	} cyg_spi_bus;
+end note
+
+@enduml
