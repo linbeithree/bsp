@@ -1,0 +1,66 @@
+@startuml
+== Data Flow ==
+
+autonumber "<b>[00]"
+device -> API :  cyg_spi_bp2016_dev_t
+note right #AAFFFF
+	cyg_spi_bp2016_dev_t {
+		cyg_spi_device spi_device;
+
+		cyg_uint8 spi_dev_num;
+		cyg_uint8 spi_cpol;
+		cyg_uint8 spi_cpha;
+
+		cyg_uint32 spi_baud;
+		cyg_uint32 spi_bus_width;
+
+		cyg_uint32 spi_cs_gpio; // The GPIO Configurations for the CS
+		// void (*spi_cs)(int);
+	} ;
+end note
+
+API -> "driver" :  cyg_spi_bp2016_bus_t
+note right #AAFFFF
+	cyg_spi_bp2016_bus_t {
+		cyg_spi_bus spi_bus;
+
+		cyg_interrupt spi_intr;
+		cyg_handle_t spi_intr_handle;
+		cyg_vector_t spi_vector;
+		cyg_priority_t spi_priority;
+
+		cyg_drv_mutex_t spi_lock;
+		cyg_drv_cond_t spi_wait;
+
+		HWP_SPI_T *hw_spi;
+		cyg_addrword_t base; // Base Address of the SPI peripheral
+
+		cyg_bool transfer_end; // Transfer end flag
+		cyg_bool cs_up;        // Chip Select up flag
+
+		volatile cyg_uint32 count;
+		volatile const cyg_uint8 *tx;
+		volatile cyg_uint8 *rx;
+
+		cyg_uint8 cs_en[4];    // The Configurations state for the CS
+		cyg_uint32 cs_gpio[4]; // The GPIO Configurations for the CS
+	};
+end note
+
+"driver" -> "I/O" :  cyg_spi_bus
+note right #AAFFFF
+	cyg_spi_bus
+	{
+		cyg_drv_mutex_t spi_lock;
+		#ifdef CYGDBG_USE_ASSERTS
+		cyg_spi_device *spi_current_device;
+		#endif
+		void (*spi_transaction_begin)(cyg_spi_device *);
+		void (*spi_transaction_transfer)(cyg_spi_device *, cyg_bool, cyg_uint32, const cyg_uint8 *, cyg_uint8 *, cyg_bool);
+		void (*spi_transaction_tick)(cyg_spi_device *, cyg_bool, cyg_uint32);
+		void (*spi_transaction_end)(cyg_spi_device *);
+		int (*spi_get_config)(cyg_spi_device *, cyg_uint32, void *, cyg_uint32 *);
+		int (*spi_set_config)(cyg_spi_device *, cyg_uint32, const void *, cyg_uint32 *);
+	} cyg_spi_bus;
+end note
+@enduml
