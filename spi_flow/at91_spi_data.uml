@@ -2,25 +2,47 @@
 == Data Flow ==
 
 autonumber "<b>[00]"
+device -> API :  cyg_spi_at91_device_s
+note right #AAFFFF
+	typedef struct cyg_spi_at91_device_s
+	{
+		//  Upper layer data
+		cyg_spi_device spi_device;  // Upper layer SPI device data
 
+		// Lower layer data (configurable)
+		cyg_uint8  dev_num;         // Device number
+		cyg_uint8  cl_pol;          // Clock polarity (0 or 1)
+		cyg_uint8  cl_pha;          // Clock phase    (0 or 1)
+		cyg_uint32 cl_brate;        // Clock baud rate
+		cyg_uint16 cs_up_udly;      // Delay in us between CS up and transfer start
+		cyg_uint16 cs_dw_udly;      // Delay in us between transfer end and CS down
+		cyg_uint16 tr_bt_udly;      // Delay in us between two transfers
+
+		// Lower layer data (internal)
+
+		cyg_bool   init;            // Is device initialized
+		cyg_uint8  cl_scbr;         // Value of SCBR (SPI clock) reg field
+		cyg_uint8  cl_div32;        // Divide SPI master clock by 32
+	};
+end note
 
 API -> "driver" :  cyg_spi_at91_bus_t
 note right #AAFFFF
 	cyg_spi_at91_bus_t {
-    //  Upper layer data 
-    cyg_spi_bus   spi_bus;                  // Upper layer SPI bus data
+		//  Upper layer data 
+		cyg_spi_bus   spi_bus;                  // Upper layer SPI bus data
 
-    //  Lower layer data 
-    cyg_interrupt     spi_interrupt;        // SPI interrupt object
-    cyg_handle_t      spi_interrupt_handle; // SPI interrupt handle
-    cyg_drv_mutex_t   transfer_mx;          // Transfer mutex
-    cyg_drv_cond_t    transfer_cond;        // Transfer condition
-    cyg_bool          transfer_end;         // Transfer end flag
-    cyg_bool          cs_up;                // Chip Select up flag 
-    cyg_vector_t      interrupt_number;     // SPI Interrupt Number
-    cyg_addrword_t    base;                 // Base Address of the SPI peripheral
-    cyg_uint8         cs_en[4];             // The Configurations state for the CS
-    cyg_uint32        cs_gpio[4];           // The GPIO Configurations for the CS
+		//  Lower layer data 
+		cyg_interrupt     spi_interrupt;        // SPI interrupt object
+		cyg_handle_t      spi_interrupt_handle; // SPI interrupt handle
+		cyg_drv_mutex_t   transfer_mx;          // Transfer mutex
+		cyg_drv_cond_t    transfer_cond;        // Transfer condition
+		cyg_bool          transfer_end;         // Transfer end flag
+		cyg_bool          cs_up;                // Chip Select up flag 
+		cyg_vector_t      interrupt_number;     // SPI Interrupt Number
+		cyg_addrword_t    base;                 // Base Address of the SPI peripheral
+		cyg_uint8         cs_en[4];             // The Configurations state for the CS
+		cyg_uint32        cs_gpio[4];           // The GPIO Configurations for the CS
 	}
 end note
 
