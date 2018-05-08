@@ -1,0 +1,70 @@
+@startuml
+== 函数调用流 ==
+autonumber "<b>[00]"
+thread -> API :  Max2112_Init
+note left #AAFFFF: init device
+thread -> API :  Max2112_config_gpio
+note left #AAFFFF: set gpio iomux
+thread -> API :  Max2112_read
+note left #AAFFFF: read
+thread -> API :  Max2112_write
+note left #AAFFFF: write
+thread -> API :  Max2112_set_mode
+note left #AAFFFF: set i2c controller mode
+thread -> API :  Max2112_get_mode
+note left #AAFFFF: get i2c controller mode
+
+autonumber "<b>[00]"
+API -> "I/O" :  cyg_io_lookup
+note left #BBFFAA: lookup
+API -> "I/O" :  cyg_io_read
+note left #BBFFAA: read
+API -> "I/O" :  cyg_io_write
+note left #BBFFAA: write
+API -> "I/O" :  cyg_io_set_config
+note left #BBFFAA: set config
+API -> "I/O" :  cyg_io_get_config
+note left #BBFFAA: get config
+
+autonumber "<b>[00]"
+"I/O" -> "DevDriver" :  max2112_Init
+note right #FFAAFF: init data struct
+"I/O" -> "DevDriver" :  max2112_set_gpio
+note right #FFAAFF: set iomux
+"I/O" -> "DevDriver" :  max2112_write
+note right #FFAAFF: device write
+"I/O" -> "DevDriver" :  max2112_read
+note right #FFAAFF: device read
+"I/O" -> "DevDriver" :  max2112_lookup
+note right #FFAAFF: loopup dev, return handler
+"I/O" -> "DevDriver" :  max2112_set_config
+note right #FFAAFF: dev set config
+"I/O" -> "DevDriver" :  max2112_get_config
+note right #FFAAFF: dev get config
+
+autonumber "<b>[00]"
+"DevDriver" -> "I2C I/O" :  cyg_i2c_transaction_begin
+note right #FFFFAA: transaction begin
+"DevDriver" -> "I2C I/O" :  cyg_i2c_transaction_tx
+note right #FFFFAA: tx
+"DevDriver" -> "I2C I/O" :  cyg_i2c_transaction_rx
+note right #FFFFAA: rx
+"DevDriver" -> "I2C I/O" :  cyg_i2c_transaction_end
+note right #FFFFAA:end
+
+
+autonumber "<b>[00]"
+"I2C I/O" -> "driver" :  dw_i2c_isr
+note right #CCFFAA: ISR
+"I2C I/O" -> "driver" :  dw_i2c_dsr
+note right #CCFFAA: DSR
+"I2C I/O" -> "driver" :  cyg_dw_i2c_init
+note right #CCFFAA: init
+"I2C I/O" -> "driver" :  cyg_dw_i2c_tx
+note right #CCFFAA: tx
+"I2C I/O" -> "driver" :  cyg_dw_i2c_rx
+note right #CCFFAA: rx
+"I2C I/O" -> "driver" :  cyg_dw_i2c_stop
+note right #CCFFAA: stop
+
+@enduml
